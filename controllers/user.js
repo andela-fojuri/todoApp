@@ -37,6 +37,33 @@ const Users = {
       }
     }).catch(() => res.status(500).send({ success: false, message: 'Unexpected error occured' }));
   },
+
+  updateUser(req, res) {
+    User.findById(req.params.id).then((user) => {
+      const { username, oldPassword, newPassword } = req.body;
+      if (oldPassword && newPassword) {
+        bcrypt.compare(oldPassword, user.password).then((err, response) => {
+          if (response) {
+            user.update({
+              password: newPassword,
+              username: username || user.username
+            }).then((updatedUser) => {
+              res.send({ success: true, message: 'Details Updated Successfully', updatedUser });
+            });
+          } else {
+            res.status(400).send({ success: false, message: 'Incorrect Old Password' });
+          }
+        });
+      } else if (username) {
+        user.update({ username: username || user.username }).then((updatedUser) => {
+          res.send({ success: true, message: 'Username Updated Successfully', updatedUser });
+        });
+      }
+    }).catch(() => {
+      res.status(500).send({ success: false, message: 'Unexpected error occured' });
+    });
+  },
+
 };
 
 export default Users;
