@@ -1,6 +1,7 @@
 module.exports = {
   development: {
-    use_env_variable: process.env.DEV_DATABASE_URL,
+    url: process.env.DEV_DATABASE_URL,
     dialect: 'postgres',
+    operatorsAliases: false,
   },
 };
