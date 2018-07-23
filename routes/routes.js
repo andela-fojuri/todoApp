@@ -1,4 +1,4 @@
-import Users from '../controllers';
+import { Users } from '../controllers';
 import middleware from '../middlewares';
 
 export default (app) => {

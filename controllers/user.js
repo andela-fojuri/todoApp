@@ -6,46 +6,36 @@ const { User } = model;
 
 const Users = {
   create(req, res) {
-    User.create({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password
-    }).then((createdUser) => {
-      const token = jwt.sign({
-        id: createdUser.id,
-        email: createdUser.email,
-      },
-      process.env.SECRET,
-      { expiresIn: '10h' });
-      res.send({ success: true, message: 'User Created Successfully', token });
-    }).catch(() => {
-      res.status(500).send({ success: false, message: 'Unexpected error occured' });
-    });
+    const { username, email, password } = req.body;
+    User.create({ username, email, password })
+      .then((createdUser) => {
+        const { id, email: newEmail } = createdUser;
+        const token = jwt.sign({ id, email: newEmail },
+          process.env.SECRET,
+          { expiresIn: '10h' });
+        return res.send({ success: true, message: 'User Created Successfully', token });
+      }).catch(() => res.status(500).send({ success: false, message: 'Unexpected error occured' }));
   },
   login(req, res) {
+    const { username, password } = req.body;
     User.findOne({
-      where: { username: req.body.username }
+      where: { username }
     }).then((user) => {
+      const { id, email } = user;
       if (user) {
-        bcrypt.compare(req.body.password, user.password).then((response) => {
+        bcrypt.compare(password, user.password).then((response) => {
           if (response) {
-            const token = jwt.sign({
-              id: user.id,
-              email: user.email,
-            }, process.env.SECRET, { expiresIn: '10h' });
-            res.send({
+            const token = jwt.sign({ id, email }, process.env.SECRET, { expiresIn: '10h' });
+            return res.send({
               success: true, message: 'Successfully logged in', token
             });
-          } else {
-            res.send({ success: false, message: 'Invalid Username/Password' });
           }
+          return res.status(403).send({ success: false, message: 'Invalid Username/Password' });
         });
       } else {
-        res.status(200).send({ success: false, message: 'User Not Registered, Kindly signup to proceed' });
+        return res.status(400).send({ success: false, message: 'User Not Registered, Kindly signup to proceed' });
       }
-    }).catch(() => {
-      res.status(500).send({ success: false, message: 'Unexpected error occured' });
-    });
+    }).catch(() => res.status(500).send({ success: false, message: 'Unexpected error occured' }));
   },
 };
 

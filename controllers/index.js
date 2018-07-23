@@ -1,1 +1,1 @@
-export { default } from './user';
+export { default as Users } from './user'; //eslint-disable-line

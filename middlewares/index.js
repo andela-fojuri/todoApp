@@ -8,13 +8,13 @@ export default {
     }
     next();
   },
-  authentication: (req, res, next) => {
+  authenticate: (req, res, next) => {
     const token = req.headers.authorization || req.headers['x-access-token'];
     // decode token
     if (token) {
       jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) {
-          return res.json({ success: false, message: 'Failed to authenticate token.' });
+          return res.status(403).send({ success: false, message: 'Failed to authenticate token.' });
         }
         req.decoded = decoded;
         next();
