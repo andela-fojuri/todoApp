@@ -37,7 +37,7 @@ const Todos = {
       if (todo.userId === req.decoded.id) {
         todo.destroy().then(() => res.send({ success: true, message: 'Todo deleted Successfully' }));
       } else {
-        res.status(400).send({ success: false, message: 'You do not have permission to delete this Document' });
+        res.status(400).send({ success: false, message: 'You do not have permission to delete this Todo' });
       }
     }).catch(() => {
       res.status(500).send({ success: false, message: 'Unexpected error occured' });
