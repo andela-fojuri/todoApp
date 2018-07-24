@@ -1,1 +1,2 @@
-export { default as Users } from './user'; //eslint-disable-line
+export { default as Users } from './user';
+export { default as Todos } from './todo';

@@ -16,6 +16,7 @@ const Users = {
         return res.send({ success: true, message: 'User Created Successfully', token });
       }).catch(() => res.status(500).send({ success: false, message: 'Unexpected error occured' }));
   },
+
   login(req, res) {
     const { username, password } = req.body;
     User.findOne({
@@ -37,6 +38,40 @@ const Users = {
       }
     }).catch(() => res.status(500).send({ success: false, message: 'Unexpected error occured' }));
   },
+
+  updateUser(req, res) {
+    User.findById(req.params.id).then((user) => {
+      const {
+        username,
+        oldPassword,
+        newPassword,
+        email
+      } = req.body;
+      if (oldPassword && newPassword) {
+        bcrypt.compare(oldPassword, user.password).then((err, response) => {
+          if (response) {
+            user.update({
+              password: newPassword
+            }).then((updatedUser) => {
+              res.send({ success: true, message: 'Password Updated Successfully', updatedUser });
+            });
+          } else {
+            res.status(400).send({ success: false, message: 'Incorrect Old Password' });
+          }
+        });
+      } else if (username || email) {
+        user.update({
+          username: username || user.username,
+          email: email || user.email
+        }).then((updatedUser) => {
+          res.send({ success: true, message: 'Details Updated Successfully', updatedUser });
+        });
+      }
+    }).catch(() => {
+      res.status(500).send({ success: false, message: 'Unexpected error occured' });
+    });
+  },
+
 };
 
 export default Users;

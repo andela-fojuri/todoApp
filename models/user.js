@@ -37,5 +37,12 @@ export default (sequelize, DataTypes) => {
     }
   });
 
+  User.beforeUpdate((user) => {
+    const hash = hashPassword(user.password);
+    if (hash) {
+      user.password = hash;
+    }
+  });
+
   return User;
 };

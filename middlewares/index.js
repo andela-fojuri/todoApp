@@ -25,6 +25,17 @@ export default {
         message: 'User not authenticated'
       });
     }
-    next();
+  },
+  verifyOwner: (req, res, next) => {
+    const { id } = req.params;
+    const { id: userId } = req.decoded;
+    if (Number(id) === userId) {
+      next();
+    } else {
+      res.status(400).send({
+        success: false,
+        message: 'Not authenticated as owner'
+      });
+    }
   }
 };
