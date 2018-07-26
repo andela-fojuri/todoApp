@@ -10,4 +10,5 @@ export default (app) => {
   app.post('/todos', authenticate, Todos.create);
   app.get('/todos/:id', authenticate, Todos.getUserTodos);
   app.delete('/todos/:id', authenticate, Todos.deleteUserTodo);
+  app.put('/todos/:id', authenticate, Todos.updateTodo);
 };
