@@ -34,6 +34,8 @@ const Todos = {
               .then((updatedTodo) => {
                 res.send({ success: true, message: 'Title Updated Successfully', updatedTodo });
               });
+          } else {
+            return res.status(409).send({ success: false, message: 'Todo already exists' });
           }
         });
       } else if (completed) {
